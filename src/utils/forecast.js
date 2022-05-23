@@ -1,18 +1,18 @@
 const request = require('request')
 
 const forecast = (long,lat,callback)=>{
-    const url = 'http://api.weatherstack.com/current?access_key=46963bd9bcf2883afe84386ad8cc88b1&query='+lat+','+long+'&units=m'
+    const url = `https://api.darksky.net/forecast/b1dab12b1c342c66174034f39e820efb/${lat},${long}?units=si`
 
-    request({url,json:true},(error, {body})=>{
+    request({url,json:true},(error, response)=>{
         if(error){
             callback('Unable to connect to weather service!',undefined)
         }
-        else if(body.error){
+        else if(response.error){
             callback('Unable to find location',undefined)
         }
         else{
             callback(undefined,
-                (body.current.weather_descriptions[0]+'. It is currently '+body.current.temperature+' degrees out. There is a %' +body.current.precip+' Chance of rain.')
+                ('It is currently '+response.body.currently.apparentTemperature+' degrees out. and the summary is:'+ response.body.currently.summary)
             )
         }
     })
