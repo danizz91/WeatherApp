@@ -15,4 +15,5 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag danizz91/weather-app:$(date +%s)
+    - run: docker build . --file Dockerfile --tag danizz91/weather-app:$(date +%s)
+    - run: docker push danizz91/weather-app:$(date +%s)
