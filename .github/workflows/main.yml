@@ -41,10 +41,10 @@ jobs:
     - name: Scan Docker image
       id: docker-scan
       env: 
-       TAG: ${{ github.run_attempt }}
+       tag: ${{ github.run_attempt }}
       uses: alexjurkiewicz/ecr-scan-image@v1.7.0
       with:
-        repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:$TAG
+        repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:$tag
         tag: ${{ github.run_attempt }}
         # fail_threshold: medium
         # ignore_list: |
