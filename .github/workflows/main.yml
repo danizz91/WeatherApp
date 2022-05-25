@@ -6,49 +6,43 @@ on:
     branches: [ master ]
 
 jobs:
-  
-  build:
-    
-    name: Build Image
+  deploy:
     runs-on: ubuntu-latest
-
-   
     steps:
-
-    - name: Check out code
-      uses: actions/checkout@v2
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-2
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: weather-app
-        IMAGE_TAG: weather-app
-      run: |
-        docker build -t 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:${{ github.run_attempt }} .
-        docker push 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:${{ github.run_attempt }}
-     
-    - name: Scan Docker image
-      id: docker-scan
-      env: 
-       tag: ${{ github.run_attempt }}
-      uses: alexjurkiewicz/ecr-scan-image@v1.7.0
-      with:
-        repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:$tag
-        tag: ${{ github.run_attempt }}
-        # fail_threshold: medium
-        # ignore_list: |
-        #   CVE-2014-7654321
-        #   CVE-2014-456132
-    # Access scan results in later steps
-    - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build & Push Docker image
+        id: docker-build
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app
+          # Use the git tag as the image tag.
+          # github.ref format is like `refs/tags/v0.0.1`, so we strip the the
+          # `refs/tags/` prefix and export this for later use.
+          IMAGE_TAG: ${{ github.ref }}
+        run: |
+          tag=${IMAGE_TAG##refs/tags/}
+          echo "Tag is $tag"
+          echo "::set-output name=tag::$tag"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$tag .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$tag
+      - name: Scan Docker image
+        id: docker-scan
+        uses: alexjurkiewicz/ecr-scan-image@v1.7.0
+        with:
+          repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app
+          tag: ${{ steps.docker-build.outputs.tag }}
+          # fail_threshold: medium
+          # ignore_list: |
+          #   CVE-2014-7654321
+          #   CVE-2014-456132
+      # Access scan results in later steps
+      - run: echo "${{ steps.docker-scan.outputs.total }} total vulnerabilities."
