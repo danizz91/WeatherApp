@@ -15,7 +15,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: eu-west-2
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -23,7 +23,7 @@ jobs:
         id: docker-build
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app
+          ECR_REPOSITORY: weather-app
           # Use the git tag as the image tag.
           # github.ref format is like `refs/tags/v0.0.1`, so we strip the the
           # `refs/tags/` prefix and export this for later use.
@@ -38,7 +38,7 @@ jobs:
         id: docker-scan
         uses: alexjurkiewicz/ecr-scan-image@v1.7.0
         with:
-          repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app
+          repository: weather-app
           tag: ${{ steps.docker-build.outputs.tag }}
           # fail_threshold: medium
           # ignore_list: |
