@@ -35,5 +35,5 @@ jobs:
         ECR_REPOSITORY: weather-app
         IMAGE_TAG: weather-app
       run: |
-        docker build -t 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:latest .
-        docker push 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:latest
+        docker build -t 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:${{ github.run_attempt }} .
+        docker push 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:${{ github.run_attempt }}
