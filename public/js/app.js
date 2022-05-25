@@ -1,7 +1,6 @@
 console.log('Client side javascript file loaded!')
 
 
-
 const weatherForm = document.querySelector('form')
 const serach = document.querySelector('input')
 const messageOne = document.querySelector('#message-1')
@@ -17,7 +16,7 @@ weatherForm.addEventListener('submit',(e)=>{
 
     messageOne.textContent = 'Loading...'
     messageTwo.textContent = ''
-    fetch('http://192.168.153.128:8080/weather?address='+location).then((response)=>{
+    fetch(`/weather?address=`+location).then((response)=>{
         response.json().then((data)=>{
             if(data.error){
                 messageOne.textContent = data.error

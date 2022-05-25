@@ -16,6 +16,7 @@ const partialsPath = path.join(__dirname , '../templates/partials')
 app.set('view engine','hbs')
 app.set('views',viewsPath)
 hbs.registerPartials(partialsPath)
+const PORT = process.env.PORT || 3000;
 
 
 // Setup static directory to serve
@@ -97,6 +98,6 @@ app.get('*',(req,res)=>{
     })
 })
 
-app.listen(8080,()=>{
-    console.log('Server is up on port 8080.')
+app.listen(PORT,()=>{
+    console.log(`Server is up on port ${PORT}.`)
 })
