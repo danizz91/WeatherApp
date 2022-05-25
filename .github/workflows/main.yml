@@ -45,7 +45,7 @@ jobs:
       uses: alexjurkiewicz/ecr-scan-image@v1.7.0
       with:
         repository: 255484761797.dkr.ecr.eu-west-2.amazonaws.com/weather-app:$TAG
-        tag: $TAG
+        tag: ${{ github.run_attempt }}
         # fail_threshold: medium
         # ignore_list: |
         #   CVE-2014-7654321
