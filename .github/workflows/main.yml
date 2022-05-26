@@ -27,7 +27,7 @@ jobs:
           # Use the git tag as the image tag..
           # github.ref format is like `refs/tags/v0.0.1`, so we strip the the
           # `refs/tags/` prefix and export this for later use.
-          IMAGE_TAG: ${{ github.run_attempt }}
+          IMAGE_TAG: ${{ steps.docker_meta.outputs.tags }}
         run: |
           tag=${IMAGE_TAG##refs/tags/}
           echo "Tag is $tag"
@@ -40,7 +40,7 @@ jobs:
         uses: alexjurkiewicz/ecr-scan-image@v1.7.0
         with:
           repository: weather-app
-          tag: ${{ github.run_attempt }}
+          tag: ${{ steps.docker_meta.outputs.tags }}
           # fail_threshold: medium
           # ignore_list: |
           #   CVE-2014-7654321
